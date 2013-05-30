@@ -1,111 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Kobo.WebTests
 {
-    public class TaskStateManager
-    {
-        private int count = 0;
-
-        public TaskState GetToken(Uri uri)
-        {
-            return new TaskState(uri.AbsoluteUri, count++, Console.Out);
-        }
-    }
-
-    public class TaskState
-    {
-        public TaskState(string uri, int line, TextWriter writer)
-        {
-            Uri = uri;
-            Line = line;
-            Writer = writer;
-        }
-
-        public string Uri { get; set; }
-
-        public int Line { get; set; }
-
-        public TextWriter Writer { get; set; }
-
-        public void SetStatusCode(int statusCode, string phrase)
-        {
-            UpdateLine(string.Format("{0} ({1})", statusCode, phrase));
-        }
-
-        private void UpdateLine(string message)
-        {
-            Console.SetCursorPosition(0, Line);
-            Console.WriteLine("{0}\t{1}\t", Uri, message);
-        }
-    }
-
     public class Crawler
     {
-        public Crawler(Queue<Uri> uris)
+        public Crawler(Queue<string> uris, TextWriter writer = null)
         {
             Uris = uris;
-            ContentStrategies = new Dictionary<string, Func<HttpContent, object>>
+            //Writer = writer ?? TextWriter.Null;
+            ContentStrategies = new Dictionary<string, Func<HttpContent, Task<object>>>
                 {
-                    { "test/html", Html }
+                    { "text/html", Html },
+                    { "application/json", Json },
                 };
         }
 
-        public Queue<Uri> Uris { get; set; }
-        public IDictionary<string, Func<HttpContent, object>> ContentStrategies { get; set; }
+        public Queue<string> Uris { get; set; }
 
-        public void Crawl()
+        public IDictionary<string, Func<HttpContent, Task<object>>> ContentStrategies { get; set; }
+
+        //public TextWriter Writer { get; set; }
+
+        public IObservable<Task<CrawlResult>> Crawl()
         {
-            var tasks = new List<Task>();
-            var httpClient = new HttpClient();
-            var stateManager = new TaskStateManager();
+            return Observable.Create(
+                (IObserver<Task<CrawlResult>> observer) =>
+                {
+                    var httpClient = new HttpClient();
+                    var tasks = new List<Task<CrawlResult>>();
+                    var requests = new List<CrawlRequest>();
 
-            while(Uris.Count > 0)
-            {
-                var uri = Uris.Dequeue();
-                var link = new CrawlerLink(uri).GetResolvedTarget();
-                
-                Console.WriteLine("{0}\tWaiting\t", link);
-                
-                tasks.Add(httpClient.GetAsync(link).ContinueWith(
-                    (responseTask, taskState) =>
-                        {
-                            var response = responseTask.Result;
-                            var state = (TaskState)taskState;
+                    while (Uris.Count > 0)
+                    {
+                        var crawlRequest = new CrawlRequest(Uris.Dequeue());
+                        if (requests.Any(r => r.Uri.Equals(crawlRequest.Uri))) // TODO: Add in filter checks for Depth, Domain whitelist, visited list
+                            continue;
+                        requests.Add(crawlRequest);
 
-                            state.SetStatusCode((int)response.StatusCode, response.ReasonPhrase);
+                        var timer = Stopwatch.StartNew();
+                        var task = httpClient.GetAsync(crawlRequest.Uri).ContinueWith(
+                            (responseTask, state) =>
+                                {
+                                    if (responseTask.IsFaulted)
+                                    {
+                                        observer.OnError(responseTask.Exception);
+                                        // TODO: observer.OnNext(new CrawlResult(exception))??
+                                    }
 
-                            HandleContent(response);
-                        }, 
-                        stateManager.GetToken(link)));
-            }
+                                    var response = responseTask.Result;
+                                    var stopwatch = (Stopwatch)state;
 
-            Task.WaitAll(tasks.ToArray());
+                                    var crawlResult = new CrawlResult(response.RequestMessage, response, stopwatch.Elapsed);
+
+                                    if (response.IsSuccessStatusCode)
+                                    {
+                                        var parsedContent = ParseContent(response.Content).Result;
+                                        crawlResult.SetContent(response.Content, parsedContent);
+                                            
+                                        // TODO: Find additional links in parsedContent and add to Uri's
+                                    }
+
+                                    return crawlResult;
+                                }, timer);
+
+                        tasks.Add(task);
+                        observer.OnNext(task);
+                    }
+
+                    Task.WhenAll(tasks).ContinueWith(_ => observer.OnCompleted());
+                    return Disposable.Empty;
+                });
         }
 
-        private object HandleContent(HttpResponseMessage response)
+        private async Task<object> ParseContent(HttpContent content)
         {
-            if (!response.IsSuccessStatusCode) 
-                return null;
-
-            var mediaType = response.Content.Headers.ContentType.MediaType;
+            var mediaType = content.Headers.ContentType.MediaType;
 
             if (ContentStrategies.ContainsKey(mediaType))
-                return ContentStrategies[mediaType](response.Content);
+                return await ContentStrategies[mediaType](content);
 
-            return null;
+            throw new NotSupportedException("Content of type '" + mediaType + "' is not supported.");
         }
 
-        private object Html(HttpContent content)
+        private async Task<object> Html(HttpContent content)
         {
-            var stream = content.ReadAsStreamAsync().Result;
-            var document = new HtmlDocument();
-            document.Load(stream);
-            return document;
+            var stream = await content.ReadAsStreamAsync();
+            var result = new HtmlDocument();
+            result.Load(stream);
+            return result;
+        }
+
+        private async Task<object> Json(HttpContent content)
+        {
+            var stream = await content.ReadAsStreamAsync();
+            var streamReader = new StreamReader(stream);
+            var textReader = new JsonTextReader(streamReader);
+            try
+            {
+                return JObject.Load(textReader);
+            }
+            catch
+            {
+                return JArray.Load(textReader);
+            }
+            finally
+            {
+                streamReader.Dispose();
+            }
         }
     }
 }
