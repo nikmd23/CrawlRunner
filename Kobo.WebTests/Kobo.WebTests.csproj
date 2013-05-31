@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PowerAssert">
+      <HintPath>..\packages\PowerAssert.1.0.2\lib\PowerAssert.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -70,11 +73,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentStrategies.cs" />
     <Compile Include="Crawler.cs" />
     <Compile Include="CrawlRequest.cs" />
     <Compile Include="CrawlResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestExecutor.cs" />
+    <Compile Include="TestMethod.cs" />
+    <Compile Include="TestResult.cs" />
+    <Compile Include="Tests.cs" />
+    <Compile Include="TestSelector.cs" />
+    <Compile Include="WebTestAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -1,36 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Kobo.WebTests
 {
     public class Crawler
     {
-        public Crawler(Queue<string> uris, TextWriter writer = null)
+        public Crawler(Queue<string> uris)
         {
             Uris = uris;
-            //Writer = writer ?? TextWriter.Null;
-            ContentStrategies = new Dictionary<string, Func<HttpContent, Task<object>>>
-                {
-                    { "text/html", Html },
-                    { "application/json", Json },
-                };
+            ContentStrategies = new ContentStrategies();
         }
 
         public Queue<string> Uris { get; set; }
 
-        public IDictionary<string, Func<HttpContent, Task<object>>> ContentStrategies { get; set; }
-
-        //public TextWriter Writer { get; set; }
+        public ContentStrategies ContentStrategies { get; private set; }
 
         public IObservable<Task<CrawlResult>> Crawl()
         {
@@ -44,7 +33,7 @@ namespace Kobo.WebTests
                     while (Uris.Count > 0)
                     {
                         var crawlRequest = new CrawlRequest(Uris.Dequeue());
-                        if (requests.Any(r => r.Uri.Equals(crawlRequest.Uri))) // TODO: Add in filter checks for Depth, Domain whitelist, visited list
+                        if (requests.Any(r => r.Uri.Equals(crawlRequest.Uri))) // TODO: Add in filter checks for Depth, Domain white list, visited list
                             continue;
                         requests.Add(crawlRequest);
 
@@ -65,10 +54,10 @@ namespace Kobo.WebTests
 
                                     if (response.IsSuccessStatusCode)
                                     {
-                                        var parsedContent = ParseContent(response.Content).Result;
+                                        var parsedContent = ParseContent(response.Content);
                                         crawlResult.SetContent(response.Content, parsedContent);
                                             
-                                        // TODO: Find additional links in parsedContent and add to Uri's
+                                        // TODO: Find additional links in parsedContent and add to Uris
                                     }
 
                                     return crawlResult;
@@ -83,41 +72,15 @@ namespace Kobo.WebTests
                 });
         }
 
-        private async Task<object> ParseContent(HttpContent content)
+        private object ParseContent(HttpContent content)
         {
             var mediaType = content.Headers.ContentType.MediaType;
 
-            if (ContentStrategies.ContainsKey(mediaType))
-                return await ContentStrategies[mediaType](content);
+            if (ContentStrategies.StrategyExists(mediaType))
+                return ContentStrategies[mediaType](content);
 
-            throw new NotSupportedException("Content of type '" + mediaType + "' is not supported.");
-        }
-
-        private async Task<object> Html(HttpContent content)
-        {
-            var stream = await content.ReadAsStreamAsync();
-            var result = new HtmlDocument();
-            result.Load(stream);
-            return result;
-        }
-
-        private async Task<object> Json(HttpContent content)
-        {
-            var stream = await content.ReadAsStreamAsync();
-            var streamReader = new StreamReader(stream);
-            var textReader = new JsonTextReader(streamReader);
-            try
-            {
-                return JObject.Load(textReader);
-            }
-            catch
-            {
-                return JArray.Load(textReader);
-            }
-            finally
-            {
-                streamReader.Dispose();
-            }
+            // Default to returning the content as a string if all else fails
+            return content.ReadAsStringAsync().Result;
         }
     }
 }
