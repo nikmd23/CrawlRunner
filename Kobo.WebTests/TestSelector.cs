@@ -10,40 +10,39 @@ namespace Kobo.WebTests
 {
     public class TestSelector
     {
-        private readonly IList<TestDefinition> standardTests = new List<TestDefinition>();
-        private readonly IDictionary<Type, IList<TestDefinition>> parametrizedTests = new Dictionary<Type, IList<TestDefinition>>();
+        private readonly IDictionary<int, IList<TestDefinition>> tests = new Dictionary<int, IList<TestDefinition>>();
 
-        public TestSelector(Assembly[] assemblies = null)
+        public TestSelector(params ITestIdentifier[] identifiers) : this(identifiers, null){}
+
+        public TestSelector(IEnumerable<ITestIdentifier> identifiers) : this(identifiers, null){}
+
+        public TestSelector(IEnumerable<ITestIdentifier> identifiers, params Assembly[] assemblies)
         {
+            Identifiers = identifiers;
+
             foreach (var assembly in assemblies ?? AppDomain.CurrentDomain.GetAssemblies())
                 foreach (var type in assembly.GetTypes().Where(type => type.IsPublic))
-                    foreach (var method in type.GetMethods().Where(method => method.IsPublic && Attribute.IsDefined(method, typeof(WebTestAttribute))))
+                    foreach (var method in type.GetMethods().Where(method => method.IsPublic))
                     {
                         var parameters = method.GetParameters();
-                        var parametersLength = parameters.Length;
-
-                        if (parametersLength == 0 || parametersLength > 2)
-                            throw new NotSupportedException("WebTest methods must have one or two parameters.");
-
-                        if (parameters[0].ParameterType != typeof(CrawlResult))
-                            throw new NotSupportedException("WebTest methods must take a CrawlResult as their first parameter.");
-
-                        var attributes = method.GetCustomAttributes<WebTestAttribute>();
-
-                        if (parametersLength == 1)
+                        foreach (var identifier in Identifiers)
                         {
-                            standardTests.Add(new TestDefinition(method, attributes.Select(a => a.Regex)));
-                            continue;
+                            var definition = identifier.Identify(method, parameters);
+
+                            if (definition != null)
+                            {
+                                var key = identifier.GetHashCode();
+
+                                if (!tests.ContainsKey(key))
+                                    tests.Add(key, new List<TestDefinition>());
+
+                                tests[key].Add(definition);
+                            }
                         }
-
-                        var key = parameters[1].ParameterType;
-
-                        if (!parametrizedTests.ContainsKey(parameters[1].ParameterType))
-                            parametrizedTests.Add(key, new List<TestDefinition>());
-
-                        parametrizedTests[key].Add(new TestDefinition(method, attributes.Select(a => a.Regex)));
                     }
         }
+
+        private IEnumerable<ITestIdentifier> Identifiers { get; set; }
 
         public IObservable<TestMethod> SelectTests(IObservable<Task<CrawlResult>> from)
         {
@@ -55,18 +54,13 @@ namespace Kobo.WebTests
                     {
                         var r = await result;
 
-                        foreach (var test in standardTests)
-                            if (test.Regex.Any(regex => regex.IsMatch(r.Uri.AbsoluteUri)))
-                            {
-                                observer.OnNext(new TestMethod(test, r));
-                            }
+                        foreach (var identifier in Identifiers)
+                        {
+                            var compatibleTests = tests[identifier.GetHashCode()].Where(t => t.CompatibleWith(r));
 
-                        if (r.ContentType != null)
-                            foreach (var test in parametrizedTests[r.ContentType])
-                                if (test.Regex.Any(regex => regex.IsMatch(r.Uri.AbsoluteUri)))
-                                {
-                                    observer.OnNext(new TestMethod(test, r, r.Content));
-                                }
+                            foreach (var test in identifier.Select(r, compatibleTests))
+                                observer.OnNext(test);
+                        }
                     },
                     onCompleted: observer.OnCompleted);
 

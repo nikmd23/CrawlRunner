@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Kobo.WebTests
 {
@@ -22,18 +20,5 @@ namespace Kobo.WebTests
         public object[] Parameters { get; private set; }
 
         public Uri Uri { get; private set; }
-    }
-
-    public class TestDefinition
-    {
-        public TestDefinition(MethodInfo method, IEnumerable<Regex> regexe)
-        {
-            Method = method;
-            Regex = regexe;
-        }
-
-        public MethodInfo Method { get; set; }
-
-        public IEnumerable<Regex> Regex { get; set; }
     }
 }

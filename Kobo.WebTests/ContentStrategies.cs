@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Xml.Linq;
-using HtmlAgilityPack;
+using CsQuery;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -70,9 +70,7 @@ namespace Kobo.WebTests
         private object HtmlParser(HttpContent content)
         {
             var stream = content.ReadAsStreamAsync().Result;
-            var result = new HtmlDocument();
-            result.Load(stream);
-            return result;
+            return CQ.Create(stream);
         }
 
         private object JsonParser(HttpContent content)
