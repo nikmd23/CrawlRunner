@@ -1,0 +1,5 @@
+- Matrix of when to use Crawl Runner vs Selenium
+- Sample tests against kobobooks.com and `.ListSlide` widgets
+- Think about using/parsing HTTP requests as input mechanism
+  - Or is [scriptcs](http://scriptcs.net/) a better alternative? 
+- Rename to CrawlRunner or something better than Kobo.Tests 
