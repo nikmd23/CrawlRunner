@@ -21,10 +21,10 @@ namespace CrawlRunner
 
         public ContentStrategies ContentStrategies { get; private set; }
 
-        public IObservable<Task<CrawlResult>> Crawl()
+        public IObservable<CrawlResult> Crawl()
         {
             return Observable.Create(
-                (IObserver<Task<CrawlResult>> observer) =>
+                async (IObserver<CrawlResult> observer) =>
                 {
                     var httpClient = new HttpClient();
                     var tasks = new List<Task<CrawlResult>>();
@@ -64,7 +64,7 @@ namespace CrawlRunner
                                 }, timer);
 
                         tasks.Add(task);
-                        observer.OnNext(task);
+                        observer.OnNext(await task);
                     }
 
                     Task.WhenAll(tasks).ContinueWith(_ => observer.OnCompleted());

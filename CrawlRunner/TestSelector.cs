@@ -44,7 +44,7 @@ namespace CrawlRunner
 
         private IEnumerable<ITestIdentifier> Identifiers { get; set; }
 
-        public IObservable<TestMethod> SelectTests(IObservable<Task<CrawlResult>> from)
+        public IObservable<TestMethod> SelectTests(IObservable<CrawlResult> from)
         {
             return Observable.Create(
             (IObserver<TestMethod> observer) =>
@@ -52,13 +52,11 @@ namespace CrawlRunner
                 from.Subscribe(
                     onNext: async result =>
                     {
-                        var r = await result;
-
                         foreach (var identifier in Identifiers)
                         {
-                            var compatibleTests = tests[identifier.GetHashCode()].Where(t => t.CompatibleWith(r));
+                            var compatibleTests = tests[identifier.GetHashCode()].Where(t => t.CompatibleWith(result));
 
-                            foreach (var test in identifier.Select(r, compatibleTests))
+                            foreach (var test in identifier.Select(result, compatibleTests))
                                 observer.OnNext(test);
                         }
                     },
