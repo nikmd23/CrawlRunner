@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kobo.WebTests", "Kobo.WebTests\Kobo.WebTests.csproj", "{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrawlRunner", "CrawlRunner\CrawlRunner.csproj", "{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B897FD98-FB23-40D4-B2A6-D455E32B7968}"
 	ProjectSection(SolutionItems) = preProject

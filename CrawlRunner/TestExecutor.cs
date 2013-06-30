@@ -2,7 +2,7 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class TestExecutor
     {

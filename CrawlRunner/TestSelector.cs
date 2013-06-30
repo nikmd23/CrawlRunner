@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class TestSelector
     {

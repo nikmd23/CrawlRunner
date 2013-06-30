@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using PowerAssert;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class Tests
     {

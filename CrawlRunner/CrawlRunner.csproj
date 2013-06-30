@@ -7,8 +7,8 @@
     <ProjectGuid>{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kobo.WebTests</RootNamespace>
-    <AssemblyName>Kobo.WebTests</AssemblyName>
+    <RootNamespace>CrawlRunner</RootNamespace>
+    <AssemblyName>CrawlRunner</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>

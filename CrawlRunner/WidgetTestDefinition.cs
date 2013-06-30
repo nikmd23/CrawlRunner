@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using CsQuery;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class WidgetTestDefinition : TestDefinition
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public interface ITestIdentifier
     {

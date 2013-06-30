@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class TestMethod
     {

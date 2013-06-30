@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class WebTestDefinition : TestDefinition
     {

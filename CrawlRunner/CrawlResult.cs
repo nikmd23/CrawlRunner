@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class CrawlResult
     {

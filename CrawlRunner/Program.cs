@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using CsQuery;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class Program
     {
@@ -13,7 +12,7 @@ namespace Kobo.WebTests
             var uris = new Queue<string>();
             uris.Enqueue("http://www.msn.com");
             uris.Enqueue("http://www.msn.com");
-            uris.Enqueue("http://search.twitter.com/search.json?q=kobo");
+            uris.Enqueue("http://search.twitter.com/search.json?q=nikmd23");
             uris.Enqueue("http://www.bing.com");
             uris.Enqueue("http://www.espn.com");
             uris.Enqueue("http://www.google.com");
@@ -24,7 +23,7 @@ namespace Kobo.WebTests
             var crawlResults = crawler.Crawl();
 
             var testSelector = new TestSelector(new WebTestIdentifier(), new WidgetTestIdentifier("#wrapper > div"));
-            var tests = testSelector.SelectTests(from: crawlResults);
+            var tests = testSelector.SelectTests(@from: crawlResults);
 
             var testExecutor = new TestExecutor();
             var results = testExecutor.Execute(tests);

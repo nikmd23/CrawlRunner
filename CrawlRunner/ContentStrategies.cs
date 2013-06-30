@@ -7,7 +7,7 @@ using CsQuery;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Kobo.WebTests
+namespace CrawlRunner
 {
     public class ContentStrategies
     {
