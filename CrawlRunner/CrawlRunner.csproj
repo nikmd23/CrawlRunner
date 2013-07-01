@@ -68,9 +68,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Tavis.UriTemplates">
-      <HintPath>..\packages\Tavis.UriTemplates.0.1.1\lib\NET40\Tavis.UriTemplates.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleOutput.cs" />

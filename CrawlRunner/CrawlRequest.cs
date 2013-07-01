@@ -1,22 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Tavis.UriTemplates;
 
 namespace CrawlRunner
 {
     public class CrawlRequest
     {
-        public CrawlRequest(string uri) : this(uri, Enumerable.Empty<KeyValuePair<string, object>>()){}
-
-        public CrawlRequest(string uri, IEnumerable<KeyValuePair<string, object>> parameters)
+        public CrawlRequest(string uri)
         {
-            var template = new UriTemplate(uri);
-
-            foreach (var parameter in parameters)
-                template.SetParameter(parameter.Key, parameter.Value);
-
-            Uri = new Uri(template.Resolve());
+            Uri = new Uri(uri);
 
             Depth = 0;
         }

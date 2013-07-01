@@ -5,3 +5,4 @@
 - Handle blocking UI thread
 - Wrap `Crawler`, `TestSelector`, `TestExecutor` and `ConsoleOutput` in interfaces
 - Implement HypermediaFollowers that gather links 
+- Support defining input Uri's as URI templates with a way to pass in parameters?
