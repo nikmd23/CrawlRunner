@@ -7,7 +7,6 @@ namespace CrawlRunner
     {
         static void Main()
         {
-            var complete = false;
             // TODO: Load strings externally from a JSON format. Context is passed from JSON
             var uris = new Queue<string>();
             uris.Enqueue("http://www.msn.com");
@@ -28,46 +27,11 @@ namespace CrawlRunner
             var testExecutor = new TestExecutor();
             var results = testExecutor.Execute(tests);
 
-            var count = 0;
-            var failures = new List<string>();
-            results.Subscribe(
-                onNext:result =>
-                {
-                    Console.WriteLine("\n{0}.{1} for {2} : {3}", 
-                        result.Test.DeclaringType.FullName, 
-                        result.Test.Name, 
-                        result.Uri, 
-                        result.Success ? "Success" : "Failed");
+            var console = new ConsoleOutput();
+            console.Display(results);
 
-                    if (!result.Success)
-                    {
-                        Console.Error.WriteLine(result.Exception);
-                        failures.Add(string.Format("\n{0}.{1} for {2}\n{3}",
-                            result.Test.DeclaringType.FullName, 
-                            result.Test.Name, 
-                            result.Uri.AbsoluteUri, 
-                            result.Exception.Message));
-                    }
-
-                    count++;
-                },
-                onCompleted: () =>
-                    {
-                        if (failures.Count > 0)
-                        {
-                            Console.ForegroundColor = ConsoleColor.DarkRed;
-                            Console.Error.WriteLine("\nTESTS FAILED ({0} passed/{1} total)", count-failures.Count, count);
-                            failures.ForEach(Console.Error.WriteLine);
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.DarkGreen;
-                            Console.Error.WriteLine("\nTESTS SUCCEEDED ({0} passed/{1} total)", count, count);
-                        }
-                        complete = true;
-                    });
-
-            while(!complete){}
+            //Thread.Sleep(2000);
+            //crawler.Stop();
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("\nComplete. Press <ENTER> to exit.");

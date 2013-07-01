@@ -60,6 +60,7 @@ namespace CrawlRunner
                                 observer.OnNext(test);
                         }
                     },
+                    onError: observer.OnError,
                     onCompleted: observer.OnCompleted);
 
                 return Disposable.Empty;

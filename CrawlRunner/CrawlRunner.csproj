@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleOutput.cs" />
     <Compile Include="ContentStrategies.cs" />
     <Compile Include="Crawler.cs" />
     <Compile Include="CrawlRequest.cs" />

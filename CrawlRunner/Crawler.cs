@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CrawlRunner
@@ -15,11 +16,24 @@ namespace CrawlRunner
         {
             Uris = uris;
             ContentStrategies = new ContentStrategies();
+            
+            TokenSource = new CancellationTokenSource();
+            Token = TokenSource.Token;
+            Token.ThrowIfCancellationRequested();
         }
+
+        private CancellationTokenSource TokenSource { get; set; }
+
+        private CancellationToken Token { get; set; }
 
         public Queue<string> Uris { get; set; }
 
         public ContentStrategies ContentStrategies { get; private set; }
+
+        public void Stop()
+        {
+            TokenSource.Cancel();
+        }
 
         public IObservable<CrawlResult> Crawl()
         {
@@ -37,8 +51,7 @@ namespace CrawlRunner
                             continue;
                         requests.Add(crawlRequest);
 
-                        var timer = Stopwatch.StartNew();
-                        var task = httpClient.GetAsync(crawlRequest.Uri).ContinueWith(
+                        var task = httpClient.GetAsync(crawlRequest.Uri, Token).ContinueWith(
                             (responseTask, state) =>
                                 {
                                     if (responseTask.IsFaulted)
@@ -61,10 +74,10 @@ namespace CrawlRunner
                                     }
 
                                     return crawlResult;
-                                }, timer);
+                                }, Stopwatch.StartNew(), Token);
 
-                        tasks.Add(task);
-                        observer.OnNext(await task);
+                            tasks.Add(task);
+                            observer.OnNext(await task);
                     }
 
                     Task.WhenAll(tasks).ContinueWith(_ => observer.OnCompleted());

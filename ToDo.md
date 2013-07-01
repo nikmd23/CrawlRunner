@@ -1,3 +1,7 @@
 - Sample tests against kobobooks.com and `.ListSlide` widgets
 - Think about using/parsing HTTP requests as input mechanism
   - Or is [scriptcs](http://scriptcs.net/) a better alternative?
+- Move to immutable types
+- Handle blocking UI thread
+- Wrap `Crawler`, `TestSelector`, `TestExecutor` and `ConsoleOutput` in interfaces
+- Implement HypermediaFollowers that gather links 

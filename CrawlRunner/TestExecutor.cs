@@ -26,6 +26,7 @@ namespace CrawlRunner
                                     observer.OnNext(new TestResult(test.Uri, test.Method, ex));
                                 }
                             },
+                            onError:observer.OnError,
                             onCompleted:observer.OnCompleted);
 
                         return Disposable.Empty;
