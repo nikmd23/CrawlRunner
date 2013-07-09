@@ -1,4 +1,5 @@
-﻿using CsQuery;
+﻿using CrawlRunner.Crawler;
+using CsQuery;
 using Newtonsoft.Json.Linq;
 using PowerAssert;
 

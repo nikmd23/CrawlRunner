@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrawlRunner", "CrawlRunner\CrawlRunner.csproj", "{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrawlRunner", "source\CrawlRunner\CrawlRunner.csproj", "{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B897FD98-FB23-40D4-B2A6-D455E32B7968}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B897FD
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrawlRunner.Crawler", "source\CrawlRunner.Crawler\CrawlRunner.Crawler.csproj", "{910D0F49-C24F-4A1C-AAFA-28C54F95A46E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +22,10 @@ Global
 		{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB64684-E268-4C32-9F8C-E8EC3F89D6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{910D0F49-C24F-4A1C-AAFA-28C54F95A46E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{910D0F49-C24F-4A1C-AAFA-28C54F95A46E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910D0F49-C24F-4A1C-AAFA-28C54F95A46E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{910D0F49-C24F-4A1C-AAFA-28C54F95A46E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

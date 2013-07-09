@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using CrawlRunner.Crawler;
 using CsQuery;
 
 namespace CrawlRunner

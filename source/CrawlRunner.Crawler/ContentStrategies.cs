@@ -7,7 +7,7 @@ using CsQuery;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CrawlRunner
+namespace CrawlRunner.Crawler
 {
     public class ContentStrategies
     {
@@ -64,7 +64,7 @@ namespace CrawlRunner
         private object XmlParser(HttpContent content)
         {
             var stream = content.ReadAsStreamAsync().Result;
-            return XElement.Load(stream);
+            return XElement.Load((Stream)stream);
         }
 
         private object HtmlParser(HttpContent content)

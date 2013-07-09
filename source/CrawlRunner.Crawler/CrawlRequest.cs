@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CrawlRunner
+namespace CrawlRunner.Crawler
 {
     public class CrawlRequest
     {

@@ -18,7 +18,7 @@ namespace CrawlRunner
             uris.Enqueue("http://www.yahoo.com");
             // uris.Enqueue("http://localhost:1234/made-up.html");
 
-            var crawler = new Crawler(uris);
+            var crawler = new Crawler.Crawler(uris);
             var crawlResults = crawler.Crawl();
 
             var testSelector = new TestSelector(new WebTestIdentifier(), new WidgetTestIdentifier("#wrapper > div"));

@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using CrawlRunner.Crawler;
 
 namespace CrawlRunner
 {

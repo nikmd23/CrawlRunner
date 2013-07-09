@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace CrawlRunner
+namespace CrawlRunner.Crawler
 {
     public class CrawlResult
     {
