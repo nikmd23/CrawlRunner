@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CrawlRunner.Crawler.Configuration;
 
 namespace CrawlRunner
 {
@@ -17,6 +18,22 @@ namespace CrawlRunner
             uris.Enqueue("http://www.google.com");
             uris.Enqueue("http://www.yahoo.com");
             // uris.Enqueue("http://localhost:1234/made-up.html");
+
+            var config = CrawlerConfiguration.Configure(
+                Start.At("http://www.msn.com", 
+                    "http://search.twitter.com/search.json?q=nikmd23", 
+                    "http://www.bing.com", 
+                    "http://www.espn.com", 
+                    "http://www.google.com", 
+                    "http://www.yahoo.com")
+                    .WithParameters(new {Title="Test", Value = 1}, new {Title="Test2"}),
+                    Start.At("http://yahoo.com:80/").With(new Contexts
+                        {
+                            {"sample", client => client.DefaultRequestHeaders.Add("test", "X")}
+                        }));
+
+            Console.Write(config);
+            Console.ReadLine();
 
             var crawler = new Crawler.Crawler(uris);
             var crawlResults = crawler.Crawl();

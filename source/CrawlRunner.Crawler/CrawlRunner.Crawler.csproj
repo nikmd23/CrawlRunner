@@ -62,8 +62,19 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Tavis.Link">
+      <HintPath>..\..\packages\Tavis.Link.0.3.3\lib\net40\Tavis.Link.dll</HintPath>
+    </Reference>
+    <Reference Include="Tavis.UriTemplates">
+      <HintPath>..\..\packages\Tavis.UriTemplates.0.1.1\lib\NET40\Tavis.UriTemplates.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\Contexts.cs" />
+    <Compile Include="Configuration\CrawlerConfiguration.cs" />
+    <Compile Include="Configuration\CrawlSession.cs" />
+    <Compile Include="Configuration\Parameters.cs" />
+    <Compile Include="Configuration\Start.cs" />
     <Compile Include="ContentStrategies.cs" />
     <Compile Include="Crawler.cs" />
     <Compile Include="CrawlRequest.cs" />
@@ -73,6 +84,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

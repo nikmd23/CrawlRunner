@@ -7,11 +7,17 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CrawlRunner.Crawler.Configuration;
 
 namespace CrawlRunner.Crawler
 {
     public class Crawler
     {
+        public Crawler(CrawlerConfiguration configuration)
+        {
+            // TODO: Implement this and delete the other .ctor
+        }
+
         public Crawler(Queue<string> uris)
         {
             Uris = uris;
